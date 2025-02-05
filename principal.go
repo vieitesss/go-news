@@ -95,8 +95,8 @@ func (p PrincipalHandler) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			p.chosen = p.list.SelectedItem().FilterValue()
-			return p, nil
+			category := p.list.SelectedItem().FilterValue()
+			return p, ChangeStatus(ArticlesTable, ArticlesTableHandler{Category: category})
 		}
 	}
 	var cmd tea.Cmd
@@ -110,10 +110,6 @@ func (p PrincipalHandler) Init() tea.Cmd {
 
 func (p PrincipalHandler) View() string {
 	s := ""
-
-	if p.chosen != "" {
-		s += fmt.Sprintf("You have chosen %s", p.chosen)
-	}
 
 	s += "\n" + p.list.View()
 

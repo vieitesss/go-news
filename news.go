@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"reflect"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -8,7 +11,13 @@ type AppStatus int
 
 const (
 	Principal AppStatus = iota
+	ArticlesTable
 )
+
+type MsgStatusChanged struct {
+	Status AppStatus
+	Object tea.Model
+}
 
 type News struct {
 	Handlers map[AppStatus]tea.Model
@@ -25,14 +34,39 @@ func NewNews() News {
 	}
 }
 
+func ChangeStatus(status AppStatus, object tea.Model) tea.Cmd {
+	return func() tea.Msg {
+		switch status {
+		case ArticlesTable:
+			switch object := object.(type) {
+			case ArticlesTableHandler:
+			default:
+				panic(fmt.Sprintf("Changing to status %v with args type %v", status, reflect.TypeOf(object)))
+			}
+		}
+
+		return MsgStatusChanged{
+			Status: status,
+			Object: object,
+		}
+	}
+}
+
 func (n News) Init() tea.Cmd {
-	return nil
+	return n.Handlers[n.Status].Init()
 }
 
 func (n News) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	currentStatus := n.Status
 	// Global key mappings.
 	switch msg := msg.(type) {
+	case MsgStatusChanged:
+		newStatus := AppStatus(msg.Status)
+		n.Status = newStatus
+		if msg.Object != nil {
+			n.Handlers[newStatus] = msg.Object
+		}
+
+		return n, n.Handlers[newStatus].Init()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c":
@@ -41,8 +75,8 @@ func (n News) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	// Per handler key mappings.
-	updated, cmd := n.Handlers[n.Status].Update(msg)
-	n.Handlers[currentStatus] = updated
+	var cmd tea.Cmd
+	n.Handlers[n.Status], cmd = n.Handlers[n.Status].Update(msg)
 	return n, cmd
 }
 
