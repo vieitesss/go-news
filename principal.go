@@ -96,7 +96,7 @@ func (p PrincipalHandler) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "enter":
 			category := p.list.SelectedItem().FilterValue()
-			return p, ChangeStatus(ArticlesTable, ArticlesTableHandler{Category: category})
+			return p, ChangeStatus(ArticlesTable, NewArticlesTable(category))
 		}
 	}
 	var cmd tea.Cmd
