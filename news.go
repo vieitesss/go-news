@@ -12,6 +12,8 @@ type AppStatus int
 const (
 	Principal AppStatus = iota
 	ArticlesTable
+
+	_NStatus
 )
 
 type MsgStatusChanged struct {
@@ -25,7 +27,7 @@ type News struct {
 }
 
 func NewNews() News {
-	h := make(map[AppStatus]tea.Model)
+	h := make(map[AppStatus]tea.Model, _NStatus)
 	h[Principal] = NewPrincipal()
 
 	return News{
