@@ -62,7 +62,7 @@ func NewPrincipal() PrincipalHandler {
 		category("Crime"),
 		category("Domestic"),
 		category("Education"),
-		category("Entertaiment"),
+		category("Entertainment"),
 		category("Environment"),
 		category("Food"),
 		category("Health"),
