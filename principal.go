@@ -52,8 +52,8 @@ func (d categoryDelegate) Render(w io.Writer, m list.Model, index int, listItem 
 }
 
 type PrincipalHandler struct {
-	list   list.Model
-	chosen string
+	list     list.Model
+	chosen   string
 }
 
 func NewPrincipal() PrincipalHandler {
@@ -109,9 +109,5 @@ func (p PrincipalHandler) Init() tea.Cmd {
 }
 
 func (p PrincipalHandler) View() string {
-	s := ""
-
-	s += "\n" + p.list.View()
-
-	return s
+	return "\n" + p.list.View()
 }
