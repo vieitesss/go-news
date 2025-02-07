@@ -114,7 +114,7 @@ func GetResults(category string) ApiResponse {
 	body, err := io.ReadAll(res.Body)
 	res.Body.Close()
 	if res.StatusCode > 299 {
-		newError(err)
+		newError(fmt.Errorf("Status code %v", res.StatusCode))
 	}
 	if err != nil {
 		newError(err)
